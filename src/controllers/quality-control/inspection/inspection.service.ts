@@ -146,10 +146,6 @@ export class InspectionService {
       }
     }
 
-    const transformMapper = transformed.map((tr: any) => {
-      console.log(tr);
-    });
-
     return transformed;
   }
 
