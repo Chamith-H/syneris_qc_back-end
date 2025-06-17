@@ -21,10 +21,13 @@ export class SapTest {
   U_Approval: string;
 
   @Prop()
-  U_Rejection: string;
+  U_ActionedNote: string;
 
   @Prop()
-  U_Cancellation: string;
+  U_ActionedDate: Date;
+
+  @Prop()
+  U_ActionedWarehouse: string;
 
   @Prop()
   U_Round: number;

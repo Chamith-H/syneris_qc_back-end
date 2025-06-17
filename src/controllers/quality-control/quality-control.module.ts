@@ -26,9 +26,23 @@ import {
 } from 'src/schemas/quality-control/stage/stage.schema';
 import { InspectionService } from './inspection/inspection.service';
 import { InspectionController } from './inspection/inspection.controller';
-import { QualityChecking, QualityCheckingSchema } from 'src/schemas/quality-control/inspection/quality-checking.schema';
-import { StageHead, StageHeadSchema } from 'src/schemas/quality-control/stage/stage-head.schema';
+import {
+  QualityChecking,
+  QualityCheckingSchema,
+} from 'src/schemas/quality-control/inspection/quality-checking.schema';
+import {
+  StageHead,
+  StageHeadSchema,
+} from 'src/schemas/quality-control/stage/stage-head.schema';
 import { SapTest, SapTestSchema } from 'src/schemas/common/sap-test.schema';
+import { EligibleService } from './eligible/eligible.service';
+import { EligibleController } from './eligible/eligible.controller';
+import { ItemTest, ItemTestSchema } from 'src/schemas/common/item-test.schema';
+import { SapIntegrationModule } from '../sap-integration/sap-integration.module';
+import {
+  WarehouseTest,
+  WarehouseTestSchema,
+} from 'src/schemas/common/warehouse-test.schema';
 
 @Module({
   imports: [
@@ -37,10 +51,13 @@ import { SapTest, SapTestSchema } from 'src/schemas/common/sap-test.schema';
       { name: Equipment.name, schema: EquipmentSchema },
       { name: QcParameter.name, schema: QcParameterSchema },
       { name: Stage.name, schema: StageSchema },
-       { name: StageHead.name, schema: StageHeadSchema },
+      { name: StageHead.name, schema: StageHeadSchema },
       { name: QualityChecking.name, schema: QualityCheckingSchema },
       { name: SapTest.name, schema: SapTestSchema },
+      { name: ItemTest.name, schema: ItemTestSchema },
+      { name: WarehouseTest.name, schema: WarehouseTestSchema },
     ]),
+    SapIntegrationModule,
   ],
   providers: [
     QcParameterService,
@@ -50,7 +67,13 @@ import { SapTest, SapTestSchema } from 'src/schemas/common/sap-test.schema';
     CheckUniquenessService,
     StageService,
     InspectionService,
+    EligibleService,
   ],
-  controllers: [QcParameterController, StageController, InspectionController],
+  controllers: [
+    QcParameterController,
+    StageController,
+    InspectionController,
+    EligibleController,
+  ],
 })
 export class QualityControlModule {}
