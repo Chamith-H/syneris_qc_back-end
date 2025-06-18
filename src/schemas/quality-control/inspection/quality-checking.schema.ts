@@ -22,7 +22,7 @@ export class QualityChecking {
 
   @Prop()
   itemCode: string;
-
+//ok
   @Prop()
   round: number;
 
