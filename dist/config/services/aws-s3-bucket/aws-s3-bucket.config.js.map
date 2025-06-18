@@ -1,1 +1,0 @@
-{"version":3,"file":"aws-s3-bucket.config.js","sourceRoot":"","sources":["../../../../src/config/services/aws-s3-bucket/aws-s3-bucket.config.ts"],"names":[],"mappings":";;;AAAA,qCAA6B;AAE7B,MAAM,SAAS,GAAG,IAAI,YAAE,CAAC;IACvB,WAAW,EAAE,OAAO,CAAC,GAAG,CAAC,iBAAiB;IAC1C,eAAe,EAAE,OAAO,CAAC,GAAG,CAAC,qBAAqB;IAClD,MAAM,EAAE,OAAO,CAAC,GAAG,CAAC,UAAU;CAC/B,CAAC,CAAC;AAEM,8BAAS"}
