@@ -46,6 +46,11 @@ export class QcParameterService {
 
   //!--> Create UOM
   async createUOM(dto: UomDto) {
+    try {
+      console.log('Hellow');
+    } catch (err) {
+      console.log(err);
+    }
     const checkingObjectCode: CreateCheckUniqueStructure = {
       dataModel: this.uomModel,
       key: 'code',
