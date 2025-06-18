@@ -1,5 +1,5 @@
 export interface StatusChangerInterface {
-  targetId: string;
+  targetId: any;
   target: string;
   dataModel: any;
   currentStatus: boolean;

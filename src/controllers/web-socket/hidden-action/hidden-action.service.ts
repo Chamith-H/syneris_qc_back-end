@@ -32,7 +32,7 @@ export class HiddenActionService {
   //!--> RELOAD | Change user's role
   async reload_when_userUpdatings(userId: string) {
     // Find requested user
-    const user = await this.userModel
+    const user: any = await this.userModel
       .findOne({ _id: userId })
       .populate({ path: 'role', populate: { path: 'permissions' } });
 
@@ -90,7 +90,7 @@ export class HiddenActionService {
       .populate({ path: 'permissions' });
 
     // Fetch permission numbers
-    const permissionNumbers = role?.permissions?.map((permission) => {
+    const permissionNumbers = role?.permissions?.map((permission: any) => {
       return permission.permissionNo;
     });
 

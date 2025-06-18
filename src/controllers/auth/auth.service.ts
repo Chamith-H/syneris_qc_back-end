@@ -53,7 +53,7 @@ export class AuthService {
     }
 
     // Get validated user data
-    const validatedUser = await this.userModel
+    const validatedUser: any = await this.userModel
       .findOne({ _id: user.id })
       .populate({ path: 'role', populate: { path: 'permissions' } });
 
@@ -146,7 +146,7 @@ export class AuthService {
   //!--> Send reset OTP code..............................................................|
   async sendOtp(dto: GetOtpDto) {
     // Finnd user according to email
-    const user = await this.userModel
+    const user: any = await this.userModel
       .findOne({ officeEmail: dto.email })
       .populate({ path: 'role' });
     if (!user) {

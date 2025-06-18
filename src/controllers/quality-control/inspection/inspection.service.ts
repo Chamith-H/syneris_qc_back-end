@@ -117,7 +117,7 @@ export class InspectionService {
 
     const transformed = [];
 
-    for (const obs of parameterObservds) {
+    for (const obs of parameterObservds as any[]) {
       const paramId = obs.parameter._id.toString();
 
       let existingParam = transformed.find((p) => p.parameterId === paramId);

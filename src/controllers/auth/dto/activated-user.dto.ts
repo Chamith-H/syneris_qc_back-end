@@ -3,7 +3,7 @@ import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 export class ActivatedUserDto {
   @IsNotEmpty()
   @IsString()
-  userId: string;
+  userId: any;
 
   @IsNotEmpty()
   @IsString()
@@ -15,11 +15,11 @@ export class ActivatedUserDto {
 
   @IsNotEmpty()
   @IsString()
-  roleId: string;
+  roleId: any;
 
   @IsNotEmpty()
   @IsString()
-  roleName: string;
+  roleName: any;
 
   @IsOptional()
   profileImage: string;
