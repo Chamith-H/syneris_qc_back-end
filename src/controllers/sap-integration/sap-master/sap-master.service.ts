@@ -15,6 +15,7 @@ export class SapMasterService {
   ) {}
 
   //!--> Get sap master data for items
+  //Nes master
   async get_itemMsterData() {
     const itemMasters = await this.masterModel.find({ target: 'Items' });
 
