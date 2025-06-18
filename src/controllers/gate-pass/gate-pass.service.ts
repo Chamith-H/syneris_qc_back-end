@@ -17,12 +17,18 @@ import { GatePassFullDto } from './dto/gate-pass-full.dto';
 import { FilterGAtePassDto } from './dto/filter-gatepass.dto';
 import { TablePaginationInterface } from 'src/config/services/table-pagination/table-pagination.interface';
 import { PaginationService } from 'src/config/services/table-pagination/table-pagination.service';
+import {
+  GatePassLine,
+  GatePassLineDocument,
+} from 'src/schemas/gate-pass/gate-pass-line.schema';
 
 @Injectable()
 export class GatePassService {
   constructor(
     @InjectModel(GatePass.name)
     private readonly gatePassModel: Model<GatePassDocument>,
+    @InjectModel(GatePassLine.name)
+    private readonly gatePassLineModel: Model<GatePassLineDocument>,
     @InjectModel(User.name)
     private readonly userModel: Model<UserDocument>,
 
@@ -124,13 +130,36 @@ export class GatePassService {
 
   //!-->
   async updateGatePass(id: string, dto: GatePassFullDto) {
+    const gatePass = await this.gatePassModel.findOne({ _id: id });
+
     const updater = await this.gatePassModel.updateOne(
       { _id: id },
       { $set: { ...dto, state: 'Completed' } },
     );
 
     if (updater) {
-      return { message: 'Saved successfully!' };
+      const lineItemMapper = await Promise.all(
+        dto.lineItems.map(async (l_item: any) => {
+          const newGatePassLine: GatePassLine = {
+            gatePass: id,
+            gatePassId: gatePass.gatePassId,
+            po: dto.po,
+            itemCode: l_item.itemCode,
+            uom: l_item.uom,
+            checkedQty: l_item.checkedQuantity,
+            firstWeight: '',
+            secondWeight: '',
+            status: 'Open',
+          };
+
+          const gatePassDoc = new this.gatePassLineModel(newGatePassLine);
+          return await gatePassDoc.save();
+        }),
+      );
+
+      if (lineItemMapper) {
+        return { message: 'Saved successfully!' };
+      }
     }
   }
 

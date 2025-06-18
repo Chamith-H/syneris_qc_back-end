@@ -11,12 +11,19 @@ import {
 import { UniqueCodeGeneratorService } from 'src/config/services/unique-code-generator/unique-code-generator.service';
 import { UtcDateGenerator } from 'src/config/services/utc-date-generator/utc-date.generator';
 import { PaginationService } from 'src/config/services/table-pagination/table-pagination.service';
+import {
+  GatePassLine,
+  GatePassLineSchema,
+} from 'src/schemas/gate-pass/gate-pass-line.schema';
+import { WeighBridgeService } from './weigh-bridge/weigh-bridge.service';
+import { WeighBridgeController } from './weigh-bridge/weigh-bridge.controller';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: GatePass.name, schema: GatePassSchema },
+      { name: GatePassLine.name, schema: GatePassLineSchema },
     ]),
 
     SapIntegrationModule,
@@ -26,7 +33,8 @@ import { PaginationService } from 'src/config/services/table-pagination/table-pa
     UniqueCodeGeneratorService,
     UtcDateGenerator,
     PaginationService,
+    WeighBridgeService,
   ],
-  controllers: [GatePassController],
+  controllers: [GatePassController, WeighBridgeController],
 })
 export class GatePassModule {}
