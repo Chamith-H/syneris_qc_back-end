@@ -1,4 +1,12 @@
-import { Body, Controller, Get, HttpCode, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { InspectionService } from './inspection.service';
 import { StartInspectionDto } from './dto/start-inspection.dto';
 import { ObservedValuesDto } from './dto/update-obsereds.dto';
@@ -10,6 +18,8 @@ import { InspectionDto } from './dto/inspection.dto';
 import { StartingConfDto } from './dto/starting-conf.dto';
 import { SampleDto } from './dto/sample.dto';
 import { StartingObserverDto } from './dto/starting-observer.dto';
+import { SetActionDto } from './dto/set-action.dto';
+import { SaveDataDto } from './dto/save-data.dto';
 
 @Controller('inspection')
 export class InspectionController {
@@ -56,5 +66,20 @@ export class InspectionController {
   @Post('create-samples')
   async createSamples(@Body() dto: SampleDto, @GetUser() userId: string) {
     return await this.inspectionService.createSamples(dto, userId);
+  }
+
+  @Post('save-data')
+  async savedata(@Body() dto: SaveDataDto) {
+    return await this.inspectionService.saveData(dto);
+  }
+
+  //!--> Set action
+  @Put('set-action/:id')
+  async setAction(
+    @Param('id') id: string,
+    @Body() dto: SetActionDto,
+    @GetUser() userId: string,
+  ) {
+    return await this.inspectionService.setAction(id, dto, userId);
   }
 }

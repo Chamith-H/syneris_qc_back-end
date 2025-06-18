@@ -16,6 +16,7 @@ import {
 } from 'src/schemas/common/warehouse-test.schema';
 import { EligibleItemDto } from './dto/eligible-item.dto';
 import { EligibleWarehouseDto } from './dto/eligible-warehouse.dto';
+import { FilterWarehouseDto } from './dto/filter-warehouse.dto';
 
 @Injectable()
 export class EligibleService {
@@ -93,5 +94,20 @@ export class EligibleService {
 
     //-->
     return await this.paginationService.render_toPAGE(currentPage);
+  }
+
+  async warehouseDrop(dto: FilterWarehouseDto) {
+    const warehouses = await this.warehouseTestModel.find(dto);
+
+    const warehouseMapper = warehouses.map((wh: WarehouseTest) => {
+      const returner = {
+        name: wh.WarehouseName,
+        _id: wh.WarehouseCode,
+      };
+
+      return returner;
+    });
+
+    return warehouseMapper;
   }
 }

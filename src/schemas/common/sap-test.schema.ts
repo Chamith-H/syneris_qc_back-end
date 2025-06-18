@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { UserDocument } from '../user-management/user.schema';
 
 export type SapTestDocument = SapTest & Document;
 
@@ -19,6 +20,9 @@ export class SapTest {
 
   @Prop()
   U_Approval: string;
+
+  @Prop({ type: String, ref: 'User' })
+  U_ActionedBy: UserDocument['_id'];
 
   @Prop()
   U_ActionedNote: string;

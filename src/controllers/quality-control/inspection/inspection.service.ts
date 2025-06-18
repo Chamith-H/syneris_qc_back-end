@@ -24,6 +24,8 @@ import { PaginationService } from 'src/config/services/table-pagination/table-pa
 import { StartingConfDto } from './dto/starting-conf.dto';
 import { SampleDto } from './dto/sample.dto';
 import { StartingObserverDto } from './dto/starting-observer.dto';
+import { SetActionDto } from './dto/set-action.dto';
+import { SaveDataDto } from './dto/save-data.dto';
 
 @Injectable()
 export class InspectionService {
@@ -249,5 +251,45 @@ export class InspectionService {
         return { message: 'QC inspection started successfully!' };
       }
     }
+  }
+
+  //!--> Save data
+  async saveData(dto: SaveDataDto) {
+    const dataMapper = await Promise.all(
+      dto.data.map(async (sample: any) => {
+        const updater = await this.qualityCheckingModel.updateOne(
+          { _id: sample.sampleId },
+          { $set: { observedValue: sample.observedValue } },
+        );
+
+        return updater;
+      }),
+    );
+
+    return dataMapper;
+  }
+
+  //!--> Set action
+  async setAction(id: string, dto: SetActionDto, userId: string) {
+    const currentDate = await this.dateCreaterService.getTodayDate();
+
+    const updateBody = {
+      U_ActionedDate: currentDate,
+      U_ActionedBy: userId,
+      ...dto,
+    };
+
+    const updater = await this.sapTestModel.updateOne(
+      { _id: id },
+      { $set: updateBody },
+    );
+
+    if (!updater.acknowledged) {
+      throw new BadRequestException('Internal server error!');
+    }
+
+    return {
+      message: `Inspection ${dto.U_Approval} Successfully!`,
+    };
   }
 }
