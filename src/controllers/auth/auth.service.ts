@@ -79,7 +79,7 @@ export class AuthService {
       type: validatedUser.type,
       roleId: validatedUser.role._id,
       roleName: validatedUser.role.name,
-      profileImage: null,
+      profileImage: 'https://cdn-icons-png.flaticon.com/512/9193/9193798.png',
     };
 
     // Fetch access permission numbers

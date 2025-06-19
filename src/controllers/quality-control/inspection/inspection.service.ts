@@ -51,20 +51,20 @@ export class InspectionService {
     dto: InspectionDto,
     pagination: PaginationStructure,
   ) {
-    if (dto.itemCode) {
-      const regex = new RegExp(dto.itemCode, 'i');
-      dto.itemCode = regex;
+    if (dto.ItemCode) {
+      const regex = new RegExp(dto.ItemCode, 'i');
+      dto.ItemCode = regex;
     }
 
     const list = await this.sapTestModel
-      .find()
+      .find(dto)
       .skip(pagination.offset)
       .limit(pagination.limit);
 
     const currentPage: TablePaginationInterface = {
       data: list,
       model: this.sapTestModel,
-      query: {},
+      query: dto,
       currentPage: pagination.page,
       dataLimit: pagination.limit,
     };

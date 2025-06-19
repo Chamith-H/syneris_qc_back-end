@@ -7,10 +7,16 @@ export type SapTestDocument = SapTest & Document;
 @Schema()
 export class SapTest {
   @Prop()
+  stage: string;
+
+  @Prop()
   DocNum: number;
 
   @Prop()
   ItemCode: string;
+
+  @Prop()
+  Batch: string;
 
   @Prop()
   Line: number;

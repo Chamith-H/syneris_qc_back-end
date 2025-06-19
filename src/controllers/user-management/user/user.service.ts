@@ -198,13 +198,14 @@ export class UserService {
     // Get AWS images
     const userData = await Promise.all(
       list.map(async (item) => {
-        const profileImage = await this.s3BucketService.getSingleFile(
-          item.profileImage,
-        );
+        // const profileImage = await this.s3BucketService.getSingleFile(
+        //   item.profileImage,
+        // );
 
         return {
           values: item,
-          image: profileImage.url,
+          image:
+            'https://www.shareicon.net/data/512x512/2016/09/15/829472_man_512x512.png',
         };
       }),
     );
@@ -234,13 +235,14 @@ export class UserService {
       throw new ConflictException('Cannot find this user!');
     }
 
-    // Get user profile image
-    const profileImage = await this.s3BucketService.getSingleFile(
-      isExist.profileImage,
-    );
+    // // Get user profile image
+    // const profileImage = await this.s3BucketService.getSingleFile(
+    //   isExist.profileImage,
+    // );
 
     // Update activated url, instead of key path
-    isExist.profileImage = profileImage.url;
+    isExist.profileImage =
+      'https://www.shareicon.net/data/512x512/2016/09/15/829472_man_512x512.png';
 
     //-->
     return isExist;
@@ -257,12 +259,13 @@ export class UserService {
     }
 
     // Get user profile image
-    const profileImage = await this.s3BucketService.getSingleFile(
-      isExist.profileImage,
-    );
+    // const profileImage = await this.s3BucketService.getSingleFile(
+    //   isExist.profileImage,
+    // );
 
     // Update activated url, instead of key path
-    isExist.profileImage = profileImage.url;
+    isExist.profileImage =
+      'https://www.shareicon.net/data/512x512/2016/09/15/829472_man_512x512.png';
 
     //-->
     return isExist;

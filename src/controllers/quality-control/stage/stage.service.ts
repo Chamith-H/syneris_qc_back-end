@@ -13,7 +13,10 @@ import { ItemParameterDto } from './dto/item-parameter.dto';
 import { FilterItemParameterDto } from './dto/item-parameter-filter.dto';
 import { PaginationStructure } from 'src/config/interfaces/pagination.structure';
 import { TablePaginationInterface } from 'src/config/services/table-pagination/table-pagination.interface';
-import { StageHead, StageHeadDocument } from 'src/schemas/quality-control/stage/stage-head.schema';
+import {
+  StageHead,
+  StageHeadDocument,
+} from 'src/schemas/quality-control/stage/stage-head.schema';
 
 @Injectable()
 export class StageService {
@@ -63,7 +66,7 @@ export class StageService {
   constructor(
     @InjectModel(Stage.name)
     private readonly stageModel: Model<StageDocument>,
-     @InjectModel(StageHead.name)
+    @InjectModel(StageHead.name)
     private readonly stageHeadModel: Model<StageHeadDocument>,
 
     private readonly uniqueCodeGenetatorService: UniqueCodeGeneratorService,
@@ -83,37 +86,35 @@ export class StageService {
       stageName: dto.stage,
       itemCode: dto.itemCode,
       method: dto.method,
-      sampleCount: parseInt(dto.sampleCount)
+      sampleCount: parseInt(dto.sampleCount),
+    };
+
+    const stageHeadDoc = new this.stageHeadModel(newStageHead);
+    const s_response = await stageHeadDoc.save();
+
+    if (s_response) {
+      const parameterMapper = await Promise.all(
+        dto.parameterLines.map(async (parameter: any) => {
+          const newStage: Stage = {
+            stageName: dto.stage,
+            itemCode: dto.itemCode,
+            parameter: parameter.parameterId,
+            mandatory: parameter.mandatory,
+            minValue: parameter.minValue,
+            maxValue: parameter.maxValue,
+            stdValue: parameter.stdValue,
+            status: parameter.status,
+          };
+
+          const stageDoc = new this.stageModel(newStage);
+          return await stageDoc.save();
+        }),
+      );
+
+      if (parameterMapper) {
+        return { message: 'QC parameter relation created successfully!' };
+      }
     }
-
-    const stageHeadDoc = new this.stageHeadModel(newStageHead)
-    const s_response = await stageHeadDoc.save()
-
-    if(s_response) {
- const parameterMapper = await Promise.all(
-      dto.parameterLines.map(async (parameter: any) => {
-        const newStage: Stage = {
-          stageName: dto.stage,
-          itemCode: dto.itemCode,
-          parameter: parameter.parameterId,
-          mandatory: parameter.mandatory,
-          minValue: parameter.minValue,
-          maxValue: parameter.maxValue,
-          stdValue: parameter.stdValue,
-          status: parameter.status,
-        };
-
-        const stageDoc = new this.stageModel(newStage);
-        return await stageDoc.save();
-      }),
-    );
-
-    if (parameterMapper) {
-      return { message: 'QC parameter relation created successfully!' };
-    }
-    }
-
-   
   }
 
   //!--> Get Item parameters

@@ -5,11 +5,11 @@ export class InspectionDto {
   stage: string;
 
   @IsNotEmpty()
-  baseDoc: string;
+  DocNum: any;
 
   @IsNotEmpty()
-  itemCode: any;
+  ItemCode: any;
 
   @IsNotEmpty()
-  approval: number;
+  U_Approval: any;
 }

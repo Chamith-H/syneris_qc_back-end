@@ -1,4 +1,13 @@
-import { Body, Controller, Get, HttpCode, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { QcParameterService } from './qc-parameter.service';
 import { UomDto } from './dto/uom.dto';
 import { Pagination } from 'src/config/decorators/pagination.decorator';
@@ -18,6 +27,16 @@ export class QcParameterController {
     return await this.qcParameterService.createUOM(dto);
   }
 
+  @Put('update-uom/:id')
+  async updateUom(@Body() dto: UomDto, @Param('id') id: string) {
+    return await this.qcParameterService.editUOM(id, dto);
+  }
+
+  @Delete('delete-uom/:id')
+  async deleteUom(@Param('id') id: string) {
+    return await this.qcParameterService.deleteUom(id);
+  }
+
   //!--> Paginate Uom
   @HttpCode(200)
   @Post('all-uom')
@@ -32,6 +51,18 @@ export class QcParameterController {
   @Post('create-equipment')
   async createEquipment(@Body() dto: UomDto) {
     return await this.qcParameterService.createEquipment(dto);
+  }
+
+  //!--> Update Equipment
+  @Put('update-equipment/:id')
+  async updateEquipment(@Body() dto: UomDto, @Param('id') id: string) {
+    return await this.qcParameterService.editEquipment(id, dto);
+  }
+
+  //!--> Delete Equipment
+  @Delete('delete-equipment/:id')
+  async deleteEquipment(@Param('id') id: string) {
+    return await this.qcParameterService.deleteEquipment(id);
   }
 
   //!--> Paginate Equipment
@@ -76,5 +107,17 @@ export class QcParameterController {
   @Get('parameter-dropdown')
   async getParameterDropdown() {
     return await this.qcParameterService.getParameterDropdown();
+  }
+
+  //!--> Update qc parameter
+  @Put('update-parameter/:id')
+  async updateParameter(@Body() dto: QcParameterDto, @Param('id') id: string) {
+    return await this.qcParameterService.editQcParameter(id, dto);
+  }
+
+  //!--> Delete qc parameter
+  @Delete('delete-parameter/:id')
+  async deleteParameter(@Param('id') id: string) {
+    return await this.qcParameterService.deleteQcParameter(id);
   }
 }
