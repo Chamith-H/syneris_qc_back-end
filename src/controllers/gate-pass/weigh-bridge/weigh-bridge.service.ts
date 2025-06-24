@@ -96,4 +96,24 @@ export class WeighBridgeService {
       };
     }
   }
+
+  //!--> Complete transaction
+  async completeTransaction(id: string, userId: string) {
+    const currentDate = await this.dateCreaterService.getTodayDate();
+
+    const response = await this.gatePassLineModel.updateOne(
+      { _id: id },
+      {
+        $set: {
+          status: 'Completed',
+          recordedBy: userId,
+          recordedDate: currentDate,
+        },
+      },
+    );
+
+    if (response) {
+      return { message: 'Weight record completed successfully!' };
+    }
+  }
 }

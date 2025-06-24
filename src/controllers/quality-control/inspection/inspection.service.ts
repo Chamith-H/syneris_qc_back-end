@@ -56,6 +56,10 @@ export class InspectionService {
       dto.ItemCode = regex;
     }
 
+    if (dto.stage === '') {
+      delete dto.stage;
+    }
+
     const list = await this.sapTestModel
       .find(dto)
       .skip(pagination.offset)

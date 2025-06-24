@@ -12,7 +12,7 @@ export class StageHead {
   @Prop()
   itemCode: string;
 
-    @Prop()
+  @Prop()
   method: string;
 
   @Prop()

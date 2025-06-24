@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { PaginationService } from 'src/config/services/table-pagination/table-pagination.service';
@@ -17,6 +17,12 @@ import {
   StageHead,
   StageHeadDocument,
 } from 'src/schemas/quality-control/stage/stage-head.schema';
+import { GetParameterDataDto } from './dto/get-parameter-data.dto';
+import { UpdateParameterDto } from './dto/update-parameter.dto';
+import {
+  QualityChecking,
+  QualityCheckingDocument,
+} from 'src/schemas/quality-control/inspection/quality-checking.schema';
 
 @Injectable()
 export class StageService {
@@ -68,6 +74,8 @@ export class StageService {
     private readonly stageModel: Model<StageDocument>,
     @InjectModel(StageHead.name)
     private readonly stageHeadModel: Model<StageHeadDocument>,
+    @InjectModel(QualityChecking.name)
+    private readonly qualityCheckingModel: Model<QualityCheckingDocument>,
 
     private readonly uniqueCodeGenetatorService: UniqueCodeGeneratorService,
     private readonly dateCreaterService: UtcDateGenerator,
@@ -141,5 +149,146 @@ export class StageService {
     };
 
     return await this.paginationService.render_toPAGE(currentPage);
+  }
+
+  //!--> Get staged parameters
+  async getStagedParameters(dto: GetParameterDataDto) {
+    const parameters = await this.stageModel.find({
+      stageName: dto.stage,
+      itemCode: dto.itemCode,
+    });
+
+    const headData = await this.stageHeadModel.findOne({
+      stageName: dto.stage,
+      itemCode: dto.itemCode,
+    });
+
+    return {
+      relations: parameters,
+      head: headData,
+    };
+  }
+
+  //!--> Update parameters
+  async updateParameters(dto: UpdateParameterDto) {
+    const headUpdater = await this.stageHeadModel.updateOne(
+      { _id: dto.headId },
+      { $set: { sampleCount: dto.sampleCount, method: dto.method } },
+    );
+
+    if (!headUpdater) {
+      throw new Error('Head update failed');
+    }
+
+    const updatedParameters = dto.DocumentLines;
+    const existParameters = await this.stageModel.find({
+      stageName: dto.stage,
+      itemCode: dto.itemCode,
+    });
+
+    const updatedRelationIds = updatedParameters.map((p) =>
+      p.relationId?.toString(),
+    );
+
+    // Delete removed parameters
+    const notIncluded = existParameters.filter(
+      (ep) => !updatedRelationIds.includes(ep._id.toString()),
+    );
+
+    if (notIncluded.length > 0) {
+      await Promise.all(
+        notIncluded.map((d_parameter: any) =>
+          this.stageModel.deleteOne({ _id: d_parameter._id }),
+        ),
+      );
+    }
+
+    // Add new parameters
+    const newlyAdded = updatedParameters.filter(
+      (uParam: any) => !uParam.relationId,
+    );
+
+    if (newlyAdded.length > 0) {
+      await Promise.all(
+        newlyAdded.map((parameter: any) => {
+          const newParameter: Stage = {
+            stageName: dto.stage,
+            itemCode: dto.itemCode,
+            parameter: parameter.parameterId,
+            mandatory: parameter.mandatory,
+            minValue: parameter.minValue,
+            maxValue: parameter.maxValue,
+            stdValue: parameter.stdValue,
+            status: parameter.status,
+          };
+          const paramDoc = new this.stageModel(newParameter);
+          return paramDoc.save();
+        }),
+      );
+    }
+
+    // Update existing parameters
+    const existIds = existParameters.map((ep) => ep._id?.toString());
+    const commonElements = updatedParameters.filter((up) =>
+      existIds.includes(up.relationId?.toString()),
+    );
+
+    if (commonElements.length > 0) {
+      await Promise.all(
+        commonElements.map((c_element: any) =>
+          this.stageModel.updateOne(
+            { _id: c_element.relationId },
+            {
+              $set: {
+                parameter: c_element.parameterId,
+                mandatory: c_element.mandatory,
+                minValue: c_element.minValue,
+                maxValue: c_element.maxValue,
+                stdValue: c_element.stdValue,
+                status: c_element.status,
+              },
+            },
+          ),
+        ),
+      );
+    }
+
+    // ✅ Only reached if everything completed successfully
+    return {
+      message: 'Item-parameter relations updated successfully!',
+    };
+  }
+
+  //!--> Delete stage
+  async deleteStage(id: string) {
+    const stageHead = await this.stageHeadModel.findOne({ _id: id });
+
+    if (!stageHead) {
+      throw new BadRequestException('Cannot find the relation!');
+    }
+
+    const isExist = await this.qualityCheckingModel.findOne({
+      stageName: stageHead.stageName,
+      itemCode: stageHead.itemCode,
+    });
+
+    if (isExist) {
+      throw new BadRequestException(
+        'Cannot delete, this relation has been assigned to QC inspections!',
+      );
+    }
+
+    const deleter = await this.stageModel.deleteMany({
+      stageName: stageHead.stageName,
+      itemCode: stageHead.itemCode,
+    });
+
+    if (deleter) {
+      const deleteHead = await this.stageHeadModel.deleteOne({ _id: id });
+
+      if (deleteHead.deletedCount !== 0) {
+        return { message: 'Item - Parameter relation deleted successfully!' };
+      }
+    }
   }
 }

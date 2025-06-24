@@ -150,6 +150,8 @@ export class GatePassService {
             firstWeight: '',
             secondWeight: '',
             status: 'Open',
+            recordedBy: null,
+            recordedDate: null,
           };
 
           const gatePassDoc = new this.gatePassLineModel(newGatePassLine);

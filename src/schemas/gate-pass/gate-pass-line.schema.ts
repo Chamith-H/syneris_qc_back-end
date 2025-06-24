@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { GatePassDocument } from './gate-pass.schema';
+import { UserDocument } from '../user-management/user.schema';
 
 export type GatePassLineDocument = GatePassLine & Document;
 
@@ -32,6 +33,12 @@ export class GatePassLine {
 
   @Prop()
   status: string;
+
+  @Prop({ type: String, ref: 'User' })
+  recordedBy: UserDocument['_id'];
+
+  @Prop()
+  recordedDate: Date;
 }
 
 export const GatePassLineSchema = SchemaFactory.createForClass(GatePassLine);
