@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   Param,
@@ -81,5 +82,26 @@ export class InspectionController {
     @GetUser() userId: string,
   ) {
     return await this.inspectionService.setAction(id, dto, userId);
+  }
+
+  @Post('upload-doc')
+  async uploadImage(@Body() dto: any) {
+    return await this.inspectionService.saveInspectImg(dto);
+  }
+
+  @Get('get-doc/:id')
+  async viewDocs(@Param('id') id: string) {
+    return await this.inspectionService.getDocuments(id);
+  }
+
+  @Delete('remove-doc/:id')
+  async removeDoc(@Param('id') id: string) {
+    const deleter = await this.inspectionService.deleteDocument(id);
+
+    if (deleter) {
+      return {
+        message: 'Document removed successfully!',
+      };
+    }
   }
 }

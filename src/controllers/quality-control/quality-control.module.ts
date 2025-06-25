@@ -43,6 +43,10 @@ import {
   WarehouseTest,
   WarehouseTestSchema,
 } from 'src/schemas/common/warehouse-test.schema';
+import {
+  InspectDoc,
+  InspectDocSchema,
+} from 'src/schemas/quality-control/inspection/inspect-doc.schema';
 
 @Module({
   imports: [
@@ -56,6 +60,7 @@ import {
       { name: SapTest.name, schema: SapTestSchema },
       { name: ItemTest.name, schema: ItemTestSchema },
       { name: WarehouseTest.name, schema: WarehouseTestSchema },
+      { name: InspectDoc.name, schema: InspectDocSchema },
     ]),
     SapIntegrationModule,
   ],

@@ -26,6 +26,10 @@ import { SampleDto } from './dto/sample.dto';
 import { StartingObserverDto } from './dto/starting-observer.dto';
 import { SetActionDto } from './dto/set-action.dto';
 import { SaveDataDto } from './dto/save-data.dto';
+import {
+  InspectDoc,
+  InspectDocDocument,
+} from 'src/schemas/quality-control/inspection/inspect-doc.schema';
 
 @Injectable()
 export class InspectionService {
@@ -41,6 +45,9 @@ export class InspectionService {
 
     @InjectModel(QualityChecking.name)
     private readonly qualityCheckingModel: Model<QualityCheckingDocument>,
+
+    @InjectModel(InspectDoc.name)
+    private readonly inspectDocModel: Model<InspectDocDocument>,
 
     private readonly dateCreaterService: UtcDateGenerator,
     private readonly paginationService: PaginationService,
@@ -136,10 +143,10 @@ export class InspectionService {
       if (!existingParam) {
         existingParam = {
           parameterId: paramId,
-          parameterIdenity: `${obs.parameter.name} / ${obs.parameter.code}`,
+          parameterIdenity: `${obs.parameter.name} (${obs.parameter.code})`,
           parameterCategory: obs.parameter.category,
           parameterType: obs.parameter.type,
-          parameterUom: `${obs.parameter.uom.name} / ${obs.parameter.uom.code}`,
+          parameterUom: `${obs.parameter.uom.name} (${obs.parameter.uom.code})`,
           mandatory: obs.stage.mandatory,
           minValue: obs.stage.minValue,
           maxValue: obs.stage.maxValue,
@@ -295,5 +302,26 @@ export class InspectionService {
     return {
       message: `Inspection ${dto.U_Approval} Successfully!`,
     };
+  }
+
+  //!--> Save image
+  async saveInspectImg(dto: any) {
+    const newDoc = new this.inspectDocModel(dto);
+    const response = await newDoc.save();
+
+    if (response) {
+      return {
+        message: 'Document uploaded successfully!',
+      };
+    }
+  }
+
+  //!--> Get documents
+  async getDocuments(id: string) {
+    return await this.inspectDocModel.find({ refId: id });
+  }
+
+  async deleteDocument(id: string) {
+    return await this.inspectDocModel.deleteOne({ _id: id });
   }
 }
